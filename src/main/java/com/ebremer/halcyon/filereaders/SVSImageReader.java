@@ -31,6 +31,7 @@ public class SVSImageReader extends AbstractImageReader {
     private final URI uri;
     
     public SVSImageReader(URI uri) throws IOException {
+        loci.common.DebugTools.setRootLevel("WARN");
         this.uri = uri;
         reader = new BufferedImageReader(new SVSReader());
         File file = new File(uri);
@@ -109,4 +110,23 @@ public class SVSImageReader extends AbstractImageReader {
     public static void main(String[] args) {
         loci.common.DebugTools.setRootLevel("WARN");
     }
+*/
+
+        /*
+        DynamicMetadataOptions options = new DynamicMetadataOptions();
+        options.setValidate(false);
+        options.setMetadataLevel(MetadataLevel.NO_OVERLAYS);
+        try (ImageReader reader = new ImageReader()) {
+            reader.setMetadataOptions(options);
+            reader.setOriginalMetadataPopulated(false);
+            reader.setId(file.getPath());
+            Resource ss = m.createResource(EB.fix(file));
+            m.add(ss,RDF.type,SchemaDO.ImageObject);
+            m.addLiteral(ss,EXIF.width,reader.getSizeX());
+            m.addLiteral(ss,EXIF.height,reader.getSizeY());
+            reader.close();
+        } catch (FormatException | IOException ex) {
+            
+        }
+        return m;
 */
