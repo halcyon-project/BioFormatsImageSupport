@@ -1,8 +1,10 @@
 package com.ebremer.halcyon.filereaders;
 
+import com.ebremer.halcyon.datum.URITools;
 import com.ebremer.halcyon.lib.ImageMeta;
 import com.ebremer.halcyon.lib.ImageRegion;
 import com.ebremer.halcyon.lib.Rectangle;
+import com.ebremer.ns.EXIF;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +17,9 @@ import loci.formats.FormatException;
 import loci.formats.gui.BufferedImageReader;
 import loci.formats.in.SVSReader;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.SchemaDO;
 
 /**
  *
@@ -23,8 +28,10 @@ import org.apache.jena.rdf.model.Model;
 public class SVSImageReader extends AbstractImageReader {
     private BufferedImageReader reader;
     private final ImageMeta meta;
+    private final URI uri;
     
     public SVSImageReader(URI uri) throws IOException {
+        this.uri = uri;
         reader = new BufferedImageReader(new SVSReader());
         File file = new File(uri);
         try {
@@ -82,7 +89,12 @@ public class SVSImageReader extends AbstractImageReader {
 
     @Override
     public Model getMeta() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Model m = ModelFactory.createDefaultModel();
+        m.createResource(URITools.fix(uri))
+            .addLiteral(EXIF.width, meta.getWidth())
+            .addLiteral(EXIF.height, meta.getHeight())
+            .addProperty(RDF.type, SchemaDO.ImageObject);
+        return m;
     }
     
     @Override
