@@ -1,8 +1,7 @@
 package com.ebremer.halcyon.filereaders;
 
-import com.ebremer.halcyon.datum.URITools;
+import com.ebremer.halcyon.lib.URITools;
 import com.ebremer.halcyon.lib.ImageMeta;
-import com.ebremer.halcyon.lib.ImageReader;
 import com.ebremer.halcyon.lib.ImageRegion;
 import com.ebremer.halcyon.lib.Rectangle;
 import com.ebremer.ns.EXIF;
@@ -104,5 +103,10 @@ public class SVSImageReader extends AbstractImageReader {
         Set<String> set = new HashSet<>();
         set.add("svs");
         return set;
+    }
+
+    @Override
+    public Model readTileMeta(ImageRegion region, Rectangle preferredsize) {
+        return ModelFactory.createDefaultModel();
     }
 }

@@ -50,21 +50,15 @@
     </profiles>
     <dependencies>
         <dependency>
-            <groupId>com.ebremer</groupId>
-            <artifactId>Halcyon</artifactId>
-            <version>0.8.0</version>
-        </dependency>
-        <dependency>
             <groupId>ome</groupId>
             <artifactId>formats-gpl</artifactId>
-            <version>7.0.0</version>
+            <version>7.0.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.jena</groupId>
-            <artifactId>jena-core</artifactId>
-            <version>4.9.0</version>
-            <type>jar</type>
+            <groupId>com.ebremer.HalcyonProject</groupId>
+            <artifactId>halcyon-core</artifactId>
+            <version>0.8.0</version>
         </dependency>
     </dependencies>
     <repositories>

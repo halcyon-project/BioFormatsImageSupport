@@ -1,6 +1,6 @@
 package com.ebremer.halcyon.filereaders;
 
-import com.ebremer.halcyon.datum.URITools;
+import com.ebremer.halcyon.lib.URITools;
 import com.ebremer.halcyon.lib.ImageMeta;
 import com.ebremer.halcyon.lib.ImageRegion;
 import com.ebremer.halcyon.lib.Rectangle;
@@ -102,5 +102,10 @@ public class NDPIImageReader extends AbstractImageReader {
         Set<String> set = new HashSet<>();
         set.add("ndpi");
         return set;
+    }
+
+    @Override
+    public Model readTileMeta(ImageRegion region, Rectangle preferredsize) {
+        return ModelFactory.createDefaultModel();
     }
 }
