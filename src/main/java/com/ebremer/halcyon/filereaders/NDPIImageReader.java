@@ -37,7 +37,7 @@ public class NDPIImageReader extends AbstractImageReader {
         try {
             reader.setId(file.toString());
         } catch (FormatException ex) {
-            Logger.getLogger(NDPIImageReader.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Format Issue Reading File : "+file);
         }
         reader.setSeries(0);
         ImageMeta.Builder builder = ImageMeta.Builder.getBuilder(0, reader.getSizeX(), reader.getSizeY())
