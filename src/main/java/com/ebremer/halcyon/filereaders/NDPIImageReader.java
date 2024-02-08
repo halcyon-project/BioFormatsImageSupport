@@ -43,7 +43,7 @@ public class NDPIImageReader extends AbstractImageReader {
         ImageMeta.Builder builder = ImageMeta.Builder.getBuilder(0, reader.getSizeX(), reader.getSizeY())
                 .setTileSizeX(reader.getOptimalTileWidth())
                 .setTileSizeY(reader.getOptimalTileHeight());
-        for(int i=1; i<reader.getSeriesCount();i++) {
+        for(int i=0; i<reader.getSeriesCount();i++) {
             reader.setSeries(i);
             builder.addScale(i, reader.getSizeX(), reader.getSizeY());
         }

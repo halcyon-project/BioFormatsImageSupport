@@ -38,13 +38,13 @@ public class SVSImageReader extends AbstractImageReader {
         try {
             reader.setId(file.toString());
         } catch (FormatException ex) {
-            System.out.println("Format Issue Reading File : "+file);
+            System.out.println("Format Issue Reading File : "+file+"\n"+ex.toString());
         }
         reader.setSeries(0);
         ImageMeta.Builder builder = ImageMeta.Builder.getBuilder(0, reader.getSizeX(), reader.getSizeY())
                 .setTileSizeX(reader.getOptimalTileWidth())
                 .setTileSizeY(reader.getOptimalTileHeight());
-        for(int i=1; i<reader.getSeriesCount();i++) {
+        for(int i=0; i<reader.getSeriesCount();i++) {
             reader.setSeries(i);
             builder.addScale(i, reader.getSizeX(), reader.getSizeY());
         }
