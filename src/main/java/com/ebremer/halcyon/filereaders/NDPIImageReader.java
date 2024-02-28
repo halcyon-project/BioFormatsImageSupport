@@ -29,6 +29,7 @@ public class NDPIImageReader extends AbstractImageReader {
     private BufferedImageReader reader;
     private final ImageMeta meta;
     private final URI uri;
+    private static final int METAVERSION = 0;
     
     public NDPIImageReader(URI uri) throws IOException {
         this.uri = uri;
@@ -53,6 +54,11 @@ public class NDPIImageReader extends AbstractImageReader {
     @Override
     public String getFormat() {
         return "ndpi";
+    }
+    
+    @Override
+    public int getMetaVersion() {
+        return METAVERSION;
     }
 
     private BufferedImage readTile(ImageRegion region, int series) {

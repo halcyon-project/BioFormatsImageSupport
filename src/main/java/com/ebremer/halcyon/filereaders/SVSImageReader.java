@@ -29,6 +29,7 @@ public class SVSImageReader extends AbstractImageReader {
     private BufferedImageReader reader;
     private final ImageMeta meta;
     private final URI uri;
+    private static final int METAVERSION = 0;
     
     public SVSImageReader(URI uri) throws IOException {
         this.uri = uri;
@@ -54,6 +55,11 @@ public class SVSImageReader extends AbstractImageReader {
     @Override
     public String getFormat() {
         return "svs";
+    }
+    
+    @Override
+    public int getMetaVersion() {
+        return METAVERSION;
     }
 
     private BufferedImage readTile(ImageRegion region, int series) {
