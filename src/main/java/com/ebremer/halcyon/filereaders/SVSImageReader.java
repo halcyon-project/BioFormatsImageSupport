@@ -5,6 +5,7 @@ import com.ebremer.halcyon.lib.ImageMeta;
 import com.ebremer.halcyon.lib.ImageRegion;
 import com.ebremer.halcyon.lib.Rectangle;
 import com.ebremer.ns.EXIF;
+import com.ebremer.ns.HAL;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -98,6 +99,7 @@ public class SVSImageReader extends AbstractImageReader {
     public Model getMeta() {
         Model m = ModelFactory.createDefaultModel();
         m.createResource(URITools.fix(uri))
+            .addLiteral(HAL.filemetaversion, METAVERSION)
             .addLiteral(EXIF.width, meta.getWidth())
             .addLiteral(EXIF.height, meta.getHeight())
             .addProperty(RDF.type, SchemaDO.ImageObject);
