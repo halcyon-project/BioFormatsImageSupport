@@ -19,9 +19,7 @@ import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.gui.BufferedImageReader;
-import loci.formats.in.SVSReader;
 import loci.formats.meta.IMetadata;
-import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEPyramidStore;
 import loci.formats.services.OMEXMLService;
 import org.apache.jena.rdf.model.Model;
@@ -35,16 +33,27 @@ import org.apache.jena.vocabulary.SchemaDO;
  *
  * @author erich
  */
-public class SVSImageReader extends AbstractImageReader {
+public class XImageReader extends AbstractImageReader {
     private BufferedImageReader reader;
     private final ImageMeta meta;
     private final URI uri;
     private static final int METAVERSION = 0;
     
-    public SVSImageReader(URI uri) throws IOException {
+    public XImageReader(URI uri) throws IOException {
         this.uri = uri;
-        loci.common.DebugTools.setRootLevel("WARN");        
-        reader = new BufferedImageReader(new SVSReader());
+        loci.common.DebugTools.setRootLevel("WARN");
+        reader = new BufferedImageReader(new loci.formats.ImageReader());
+        OMEXMLService service = null;
+        try {
+            ServiceFactory factory = new ServiceFactory();
+            service = factory.getInstance(OMEXMLService.class);
+            IMetadata xmeta = service.createOMEXMLMetadata();
+            reader.setMetadataStore(xmeta);
+        } catch (DependencyException ex) {
+            Logger.getLogger(XImageReader.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ServiceException ex) {
+            Logger.getLogger(XImageReader.class.getName()).log(Level.SEVERE, null, ex);
+        }                
         File file = new File(uri);
         try {
             reader.setId(file.toString());
@@ -52,6 +61,12 @@ public class SVSImageReader extends AbstractImageReader {
             System.out.println("Format Issue Reading File : "+file+"\n"+ex.toString());
         }
         reader.setSeries(0);
+        try {
+            String xml = service.getOMEXML(service.asRetrieve(reader.getMetadataStore()));
+            System.out.println(xml);
+        } catch (ServiceException ex) {
+            Logger.getLogger(XImageReader.class.getName()).log(Level.SEVERE, null, ex);
+        }
         ImageMeta.Builder builder = ImageMeta.Builder.getBuilder(0, reader.getSizeX(), reader.getSizeY())
                 .setTileSizeX(reader.getOptimalTileWidth())
                 .setTileSizeY(reader.getOptimalTileHeight());
@@ -62,44 +77,29 @@ public class SVSImageReader extends AbstractImageReader {
         meta = builder.build();
     }
     
-    public void calculateMeta() throws DependencyException, ServiceException {
-        ServiceFactory factory = new ServiceFactory();
-        OMEXMLService service = factory.getInstance(OMEXMLService.class);
-        IMetadata omexml = service.createOMEXMLMetadata();
-        MetadataStore mx = reader.getReader().getMetadataStore();
-        OMEPyramidStore ha = (OMEPyramidStore) mx;
-        /*
+    public Double FindMagnification() {
+        var mx = (OMEPyramidStore) reader.getReader().getMetadataStore();
+        System.out.println(mx.dumpXML());
         String objectiveID = mx.getObjectiveSettingsID(0);
-        Double magnification =  0d;
 	int objectiveIndex = -1;
 	int instrumentIndex = -1;
-	int nInstruments = mx.getInstrumentCount();
-	for (int i = 0; i < nInstruments; i++) {
-            int nObjectives = mx.getObjectiveCount(i);
-            for (int o = 0; 0 < nObjectives; o++) {
-                if (objectiveID.equals(mx.getObjectiveID(i, o))) {
-                    instrumentIndex = i;
-                    objectiveIndex = o;
+	int numberOfInstruments = mx.getInstrumentCount();
+	for (int ii = 0; ii < numberOfInstruments; ii++) {
+            int numObjectives = mx.getObjectiveCount(ii);
+            for (int oi = 0; 0 < numObjectives; oi++) {
+                if (objectiveID.equals(mx.getObjectiveID(ii, oi))) {
+                    instrumentIndex = ii;
+                    objectiveIndex = oi;
                     break;
 		}
             }	    		
 	}
-	if (instrumentIndex < 0) {
-            //logger.warn("Cannot find objective for ref {}", objectiveID);
-	} else {
-            Double magnificationObject = mx.getObjectiveNominalMagnification(instrumentIndex, objectiveIndex);
-            if (magnificationObject == null) {
-                //logger.warn("Nominal objective magnification missing for {}:{}", instrumentIndex, objectiveIndex);
-            } else {
-                magnification = magnificationObject;		    		
-            }
-        }
-        System.out.println(magnification);*/
+	return (instrumentIndex < 0) ? null : mx.getObjectiveNominalMagnification(instrumentIndex, objectiveIndex);
     }
 
     @Override
     public String getFormat() {
-        return "svs";
+        return "Xsvs";
     }
     
     @Override
@@ -112,9 +112,9 @@ public class SVSImageReader extends AbstractImageReader {
         try {
             return reader.openImage(0, region.getX(), region.getY(), region.getWidth(), region.getHeight());
         } catch (FormatException ex) {
-            Logger.getLogger(SVSImageReader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(XImageReader.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(SVSImageReader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(XImageReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
@@ -124,7 +124,7 @@ public class SVSImageReader extends AbstractImageReader {
         try {
             reader.close();
         } catch (IOException ex) {
-            Logger.getLogger(SVSImageReader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(XImageReader.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -143,7 +143,7 @@ public class SVSImageReader extends AbstractImageReader {
     public Model getMeta() {
         Model m = ModelFactory.createDefaultModel();
         m.createResource(URITools.fix(uri))
-            .addLiteral(HAL.filemetaversion, (Integer) METAVERSION)
+            .addLiteral(HAL.filemetaversion, METAVERSION)
             .addLiteral(EXIF.width, meta.getWidth())
             .addLiteral(EXIF.height, meta.getHeight())
             .addProperty(RDF.type, SchemaDO.ImageObject);
@@ -164,8 +164,9 @@ public class SVSImageReader extends AbstractImageReader {
     
     public static void main(String[] args) throws IOException, DependencyException, ServiceException {
         File file = new File("D:\\HalcyonStorage\\tcga\\brca\\TCGA-E2-A1B1-01Z-00-DX1.7C8DF153-B09B-44C7-87B8-14591E319354.svs");
-        SVSImageReader reader = new SVSImageReader(file.toURI());       
+        //File file = new File("D:\\HalcyonStorage\\tcga\\brca\\tif\\TCGA-E2-A1B1-01Z-00-DX1.7C8DF153-B09B-44C7-87B8-14591E319354.tif");
+        XImageReader reader = new XImageReader(file.toURI());       
         RDFDataMgr.write(System.out, reader.getMeta(), Lang.TURTLE);
-        reader.calculateMeta();
+        reader.FindMagnification();
     }
 }

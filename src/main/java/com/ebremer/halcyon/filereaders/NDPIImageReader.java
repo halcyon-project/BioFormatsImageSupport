@@ -98,7 +98,7 @@ public class NDPIImageReader extends AbstractImageReader {
     public Model getMeta() {
         Model m = ModelFactory.createDefaultModel();
         m.createResource(URITools.fix(uri))
-            .addLiteral(HAL.filemetaversion, METAVERSION)
+            .addLiteral(HAL.filemetaversion, (Integer) METAVERSION)
             .addLiteral(EXIF.width, meta.getWidth())
             .addLiteral(EXIF.height, meta.getHeight())
             .addProperty(RDF.type, SchemaDO.ImageObject);
