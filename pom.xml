@@ -10,14 +10,23 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
     </properties>
-    <build>                
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                    <includes>
+                        <include>META-INF/services/*</include>
+                        <include>win32-x86-64/*.dll</include>
+                    </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.6.0</version>
                <configuration>
-                    <outputDirectory>/projects/Halcyon/Halcyon/libs</outputDirectory>
+                    <!--<outputDirectory>/projects/Halcyon/Halcyon/libs</outputDirectory>-->
                     <shadedArtifactAttached>false</shadedArtifactAttached>
                     <transformers>
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
@@ -43,12 +52,12 @@
                 </executions>
             </plugin>
         </plugins>
-    </build>
+    </build>    
     <dependencies>
         <dependency>
             <groupId>ome</groupId>
             <artifactId>formats-gpl</artifactId>
-            <version>7.3.0</version>
+            <version>8.0.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -56,6 +65,11 @@
             <artifactId>halcyon-core</artifactId>
             <version>1.1.0</version>
         </dependency>
+        <dependency>
+            <groupId>ome</groupId>
+            <artifactId>OMEZarrReader</artifactId>
+            <version>0.5.2</version>
+        </dependency>  
     </dependencies>
     <repositories>
         <repository>

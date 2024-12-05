@@ -21,6 +21,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.SchemaDO;
+import org.apache.jena.vocabulary.XSD;
 
 /**
  *
@@ -98,9 +99,9 @@ public class NDPIImageReader extends AbstractImageReader {
     public Model getMeta(URI xuri) {
         Model m = ModelFactory.createDefaultModel();
         m.createResource(URITools.fix(xuri))
-            .addLiteral(HAL.filemetaversion, (Integer) METAVERSION)
-            .addLiteral(EXIF.width, meta.getWidth())
-            .addLiteral(EXIF.height, meta.getHeight())
+            .addLiteral(HAL.filemetaversion, m.createTypedLiteral( METAVERSION, XSD.integer.getURI()))
+            .addLiteral(EXIF.width, m.createTypedLiteral(meta.getWidth(), XSD.integer.getURI()))
+            .addLiteral(EXIF.height, m.createTypedLiteral(meta.getHeight(), XSD.integer.getURI()))
             .addProperty(RDF.type, SchemaDO.ImageObject);
         return m;
     }

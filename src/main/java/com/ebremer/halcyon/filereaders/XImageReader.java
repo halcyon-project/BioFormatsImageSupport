@@ -28,6 +28,7 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.SchemaDO;
+import org.apache.jena.vocabulary.XSD;
 
 /**
  *
@@ -143,9 +144,9 @@ public class XImageReader extends AbstractImageReader {
     public Model getMeta(URI xuri) {
         Model m = ModelFactory.createDefaultModel();
         m.createResource(URITools.fix(xuri))
-            .addLiteral(HAL.filemetaversion, METAVERSION)
-            .addLiteral(EXIF.width, meta.getWidth())
-            .addLiteral(EXIF.height, meta.getHeight())
+            .addLiteral(HAL.filemetaversion, m.createTypedLiteral( METAVERSION, XSD.integer.getURI()))
+            .addLiteral(EXIF.width, m.createTypedLiteral(meta.getWidth(), XSD.integer.getURI()))
+            .addLiteral(EXIF.height, m.createTypedLiteral(meta.getHeight(), XSD.integer.getURI()))
             .addProperty(RDF.type, SchemaDO.ImageObject);
         return m;
     }

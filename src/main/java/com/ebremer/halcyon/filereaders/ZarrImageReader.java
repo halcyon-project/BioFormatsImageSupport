@@ -19,13 +19,16 @@ import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.gui.BufferedImageReader;
-import loci.formats.in.SVSReader;
+import loci.formats.in.ZarrReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEPyramidStore;
 import loci.formats.services.OMEXMLService;
+import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.SchemaDO;
 import org.apache.jena.vocabulary.XSD;
@@ -34,16 +37,16 @@ import org.apache.jena.vocabulary.XSD;
  *
  * @author erich
  */
-public class SVSImageReader extends AbstractImageReader {
+public class ZarrImageReader extends AbstractImageReader {
     private BufferedImageReader reader;
     private final ImageMeta meta;
     private final URI uri;
     private static final int METAVERSION = 0;
     
-    public SVSImageReader(URI uri, URI base) throws IOException {
+    public ZarrImageReader(URI uri, URI base) throws IOException {
         this.uri = uri;
         loci.common.DebugTools.setRootLevel("WARN");        
-        reader = new BufferedImageReader(new SVSReader());
+        reader = new BufferedImageReader(new ZarrReader());
         File file = new File(uri);
         try {
             reader.setId(file.toString());
@@ -60,7 +63,7 @@ public class SVSImageReader extends AbstractImageReader {
         }
         //System.out.println("# of scales "+reader.getSeriesCount());
         meta = builder.build();
-        //ShowPyramidMeta();
+        ShowPyramidMeta();
     }
     
     private void ShowPyramidMeta() {
@@ -106,7 +109,7 @@ public class SVSImageReader extends AbstractImageReader {
 
     @Override
     public String getFormat() {
-        return "svs";
+        return "zarr";
     }
     
     @Override
@@ -119,9 +122,9 @@ public class SVSImageReader extends AbstractImageReader {
         try {
             return reader.openImage(0, region.getX(), region.getY(), region.getWidth(), region.getHeight());
         } catch (FormatException ex) {
-            Logger.getLogger(SVSImageReader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ZarrImageReader.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(SVSImageReader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ZarrImageReader.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
@@ -131,7 +134,7 @@ public class SVSImageReader extends AbstractImageReader {
         try {
             reader.close();
         } catch (IOException ex) {
-            Logger.getLogger(SVSImageReader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ZarrImageReader.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -165,7 +168,7 @@ public class SVSImageReader extends AbstractImageReader {
     @Override
     public Set<String> getSupportedFormats() {
         Set<String> set = new HashSet<>();
-        set.add("svs");
+        set.add("zarr");
         return set;
     }
 
@@ -175,9 +178,9 @@ public class SVSImageReader extends AbstractImageReader {
     }
     
     public static void main(String[] args) throws IOException, DependencyException, ServiceException {
-        File file = new File("D:\\HalcyonStorage\\hamid\\SP16-22530_1I_1.svs");
-        SVSImageReader reader = new SVSImageReader(file.toURI(), file.toURI());       
-        //RDFDataMgr.write(System.out, reader.getMeta(), Lang.TURTLE);
+        File file = new File("E:\\zarr\\4495402.zarr\\");
+        ZarrImageReader reader = new ZarrImageReader(file.toURI(), file.toURI());       
+        RDFDataMgr.write(System.out, reader.getMeta(), Lang.TURTLE);
         //reader.calculateMeta();
     }
 }

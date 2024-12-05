@@ -1,2 +1,3 @@
 com.ebremer.halcyon.filereaders.SVSImageReaderFactory
 com.ebremer.halcyon.filereaders.NDPIImageReaderFactory
+com.ebremer.halcyon.filereaders.ZarrImageReaderFactory

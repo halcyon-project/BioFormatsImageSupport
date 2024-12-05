@@ -11,14 +11,14 @@ import org.slf4j.LoggerFactory;
  *
  * @author erich
  */
-public class SVSImageReaderFactory implements FileReaderFactory {
+public class ZarrImageReaderFactory implements FileReaderFactory {
     
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SVSImageReaderFactory.class);
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ZarrImageReaderFactory.class);
 
     @Override
     public FileReader create(URI uri, URI base) {
         try {
-            return new SVSImageReader(uri, base);
+            return new ZarrImageReader(uri, base);
         } catch (IOException ex) {
             logger.error(uri+" "+base+" "+ex.toString());
         }
@@ -33,7 +33,7 @@ public class SVSImageReaderFactory implements FileReaderFactory {
     @Override
     public Set<String> getSupportedFormats() {
         Set<String> set = new HashSet<>();
-        set.add("svs");
+        set.add("zarr");
         return set;
     }
 }
