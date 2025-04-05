@@ -53,8 +53,8 @@ public class Test {
         SVSReader r = new SVSReader();
         r.setId("charm");
         r.setSeries(0);
-        System.out.println(r.getSizeX()+" x "+r.getSizeY());*/
-        
+        System.out.println(r.getSizeX()+" x "+r.getSizeY());
+        */
         URI neo = URI.create("https://ebremer.com/HalcyonStorage/image.svs");
         URI back2 = URI.create("s3:///ebremeribox/");
         URI front2 = URI.create("https://ebremer.com/HalcyonStorage/");
