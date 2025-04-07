@@ -67,13 +67,17 @@ public class Test {
         
         URIObject uri2 = lws2.getURIObject(neo);
         
-        SeekableByteChannel sbc2 = uri2.getSeekableByteChannel();
-        FileRandomAccess fra2 = new FileRandomAccess(sbc2);
-        Location.mapFile("charm2", fra2);
-        SVSReader r2 = new SVSReader();
-        r2.setId("charm2");
-        r2.setSeries(0);
-        System.out.println(r2.getSizeX()+" x "+r2.getSizeY());
+        try (SeekableByteChannel sbc2 = uri2.getSeekableByteChannel()) {
+            FileRandomAccess fra2 = new FileRandomAccess(sbc2);
+            Location.mapFile("charm2", fra2);
+            SVSReader r2 = new SVSReader();
+            r2.setId("charm2");
+            r2.setSeries(0);
+            System.out.println(r2.getSizeX()+" x "+r2.getSizeY());
+            r2.close();
+            fra2.close();
+        }
+        lws2.close();
     }
     
 }
