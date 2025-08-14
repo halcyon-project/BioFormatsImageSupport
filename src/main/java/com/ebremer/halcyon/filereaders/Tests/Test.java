@@ -1,7 +1,7 @@
 package com.ebremer.halcyon.filereaders.Tests;
 
-import com.ebremer.bioformats.FileRandomAccess;
-import com.ebremer.bioformats.HTTPRandomAccess;
+import com.ebremer.capella.bioformats.FileRandomAccess;
+import com.ebremer.capella.bioformats.HTTPRandomAccess;
 import com.ebremer.halcyon.lib.URITools;
 import is.halcyon.storage.Tools;
 import is.halcyon.storage.URIObject;

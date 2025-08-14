@@ -6,6 +6,7 @@ import com.ebremer.halcyon.lib.ImageRegion;
 import com.ebremer.halcyon.lib.Rectangle;
 import com.ebremer.ns.EXIF;
 import com.ebremer.ns.HAL;
+import com.ebremer.ns.LDP;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -99,6 +100,7 @@ public class NDPIImageReader extends AbstractImageReader {
     public Model getMeta(URI xuri) {
         Model m = ModelFactory.createDefaultModel();
         m.createResource(URITools.fix(xuri))
+            .addProperty(RDF.type, LDP.NonRDFSource)
             .addLiteral(HAL.filemetaversion, m.createTypedLiteral( METAVERSION, XSD.integer.getURI()))
             .addLiteral(EXIF.width, m.createTypedLiteral(meta.getWidth(), XSD.integer.getURI()))
             .addLiteral(EXIF.height, m.createTypedLiteral(meta.getHeight(), XSD.integer.getURI()))
