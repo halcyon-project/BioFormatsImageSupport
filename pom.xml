@@ -23,7 +23,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.6.0</version>
+                <version>3.6.1</version>
                <configuration>
                     <!--<outputDirectory>/projects/Halcyon/Halcyon/libs</outputDirectory>-->
                     <shadedArtifactAttached>false</shadedArtifactAttached>
@@ -67,12 +67,7 @@
         <dependency>
             <groupId>ome</groupId>
             <artifactId>OMEZarrReader</artifactId>
-            <version>0.5.2</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>Capella</artifactId>
-            <version>1.0.0</version>
+            <version>0.6.0</version>
         </dependency>
     </dependencies>
     <repositories>
