@@ -6,7 +6,7 @@ import com.ebremer.halcyon.lib.ImageRegion;
 import com.ebremer.halcyon.lib.Rectangle;
 import com.ebremer.ns.EXIF;
 import com.ebremer.ns.HAL;
-import com.ebremer.ns.LDP;
+import com.ebremer.ns.LWS;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +20,7 @@ import loci.formats.gui.BufferedImageReader;
 import loci.formats.in.NDPIReader;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.SchemaDO;
 import org.apache.jena.vocabulary.XSD;
@@ -33,11 +34,13 @@ public class NDPIImageReader extends AbstractImageReader {
     private final ImageMeta meta;
     private final URI uri;
     private static final int METAVERSION = 0;
+    private final long sizeInBytes;
     
     public NDPIImageReader(URI uri, URI base) throws IOException {
         this.uri = uri;
         reader = new BufferedImageReader(new NDPIReader());
         File file = new File(uri);
+        sizeInBytes = file.length();
         try {
             reader.setId(file.toString());
         } catch (FormatException ex) {
@@ -99,12 +102,17 @@ public class NDPIImageReader extends AbstractImageReader {
     @Override
     public Model getMeta(URI xuri) {
         Model m = ModelFactory.createDefaultModel();
+        Resource bnode = m.createResource();
         m.createResource(URITools.fix(xuri))
-            .addProperty(RDF.type, LDP.NonRDFSource)
+            .addProperty(RDF.type, LWS.DataResource)
+            .addProperty(LWS.representation, bnode)
             .addLiteral(HAL.filemetaversion, m.createTypedLiteral( METAVERSION, XSD.integer.getURI()))
             .addLiteral(EXIF.width, m.createTypedLiteral(meta.getWidth(), XSD.integer.getURI()))
             .addLiteral(EXIF.height, m.createTypedLiteral(meta.getHeight(), XSD.integer.getURI()))
             .addProperty(RDF.type, SchemaDO.ImageObject);
+        bnode
+            .addProperty(LWS.mediaType, "image/tiff")
+            .addLiteral(LWS.sizeInBytes, sizeInBytes);
         return m;
     }
     

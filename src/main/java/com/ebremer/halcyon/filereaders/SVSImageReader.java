@@ -6,7 +6,7 @@ import com.ebremer.halcyon.lib.ImageRegion;
 import com.ebremer.halcyon.lib.Rectangle;
 import com.ebremer.ns.EXIF;
 import com.ebremer.ns.HAL;
-import com.ebremer.ns.LDP;
+import com.ebremer.ns.LWS;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +27,7 @@ import loci.formats.ome.OMEPyramidStore;
 import loci.formats.services.OMEXMLService;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.SchemaDO;
 import org.apache.jena.vocabulary.XSD;
@@ -40,12 +41,14 @@ public class SVSImageReader extends AbstractImageReader {
     private final ImageMeta meta;
     private final URI uri;
     private static final int METAVERSION = 0;
+    private final long sizeInBytes;
     
     public SVSImageReader(URI uri, URI base) throws IOException {
         this.uri = uri;
         loci.common.DebugTools.setRootLevel("WARN");        
         reader = new BufferedImageReader(new SVSReader());
         File file = new File(uri);
+        sizeInBytes = file.length();
         try {
             reader.setId(file.toString());
         } catch (FormatException ex) {
@@ -150,12 +153,17 @@ public class SVSImageReader extends AbstractImageReader {
     @Override
     public Model getMeta(URI xuri) {
         Model m = ModelFactory.createDefaultModel();
+        Resource bnode = m.createResource();
         m.createResource(URITools.fix(xuri))
-            .addProperty(RDF.type, LDP.NonRDFSource)
+            .addProperty(RDF.type, LWS.DataResource)
+            .addProperty(LWS.representation, bnode)
             .addLiteral(HAL.filemetaversion, m.createTypedLiteral( METAVERSION, XSD.integer.getURI()))
             .addLiteral(EXIF.width, m.createTypedLiteral(meta.getWidth(), XSD.integer.getURI()))
             .addLiteral(EXIF.height, m.createTypedLiteral(meta.getHeight(), XSD.integer.getURI()))
             .addProperty(RDF.type, SchemaDO.ImageObject);
+        bnode
+            .addProperty(LWS.mediaType, "application/octet-stream")
+            .addLiteral(LWS.sizeInBytes, sizeInBytes);
         return m;
     }
     
