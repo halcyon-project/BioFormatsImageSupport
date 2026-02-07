@@ -37,6 +37,8 @@
                                 <exclude>META-INF/*.SF</exclude>
                                 <exclude>META-INF/*.DSA</exclude>
                                 <exclude>META-INF/*.RSA</exclude>
+                                <exclude>org/apache/logging/slf4j/**</exclude>
+                                <exclude>META-INF/services/org.slf4j.spi.SLF4JServiceProvider</exclude>
                             </excludes>
                         </filter>
                     </filters>
@@ -50,6 +52,43 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.6.2</version>
+                <executions>
+                    <execution>
+                        <id>enforce</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <banDuplicatePomDependencyVersions/>
+                            </rules>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>ban-log4j-slf4j-impl</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <bannedDependencies>
+                                    <searchTransitive>true</searchTransitive>
+                                    <excludes>
+                                        <exclude>org.apache.logging.log4j:log4j-slf4j-impl</exclude>
+                                        <exclude>org.apache.logging.log4j:log4j-slf4j2-impl</exclude>
+                                    </excludes>
+                                    <message>Found Log4j2 SLF4J binding! This conflicts with Logback. Add exclusions to remove it.</message>
+                                </bannedDependencies>
+                            </rules>
+                            <fail>true</fail>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>                  
         </plugins>
     </build>    
     <dependencies>
@@ -58,11 +97,27 @@
             <artifactId>formats-gpl</artifactId>
             <version>8.1.1</version>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.ebremer.HalcyonProject</groupId>
             <artifactId>halcyon-core</artifactId>
             <version>1.1.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>jcl-over-slf4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>ome</groupId>
