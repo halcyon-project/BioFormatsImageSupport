@@ -40,11 +40,13 @@ public class SVSImageReader extends AbstractImageReader {
     private BufferedImageReader reader;
     private final ImageMeta meta;
     private final URI uri;
+    private final URI base;
     private static final int METAVERSION = 0;
     private final long sizeInBytes;
     
     public SVSImageReader(URI uri, URI base) throws IOException {
         this.uri = uri;
+        this.base = base;
         loci.common.DebugTools.setRootLevel("WARN");        
         reader = new BufferedImageReader(new SVSReader());
         File file = new File(uri);
@@ -154,7 +156,7 @@ public class SVSImageReader extends AbstractImageReader {
     public Model getMeta(URI xuri) {
         Model m = ModelFactory.createDefaultModel();
         Resource bnode = m.createResource();
-        m.createResource(URITools.fix(xuri))
+        m.createResource(URITools.fix(base))
             .addProperty(RDF.type, LWS.DataResource)
             .addProperty(LWS.representation, bnode)
             .addLiteral(HAL.filemetaversion, m.createTypedLiteral( METAVERSION, XSD.integer.getURI()))

@@ -5,6 +5,7 @@ import java.net.URI;
 import java.nio.channels.SeekableByteChannel;
 import java.util.HashSet;
 import java.util.Set;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -13,7 +14,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SVSImageReaderFactory implements FileReaderFactory {
     
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SVSImageReaderFactory.class);
+    private static final Logger logger = LoggerFactory.getLogger(SVSImageReaderFactory.class);
 
     @Override
     public FileReader create(URI uri, URI base) {
