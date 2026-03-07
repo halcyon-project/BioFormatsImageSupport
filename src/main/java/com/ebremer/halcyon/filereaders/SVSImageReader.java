@@ -64,7 +64,6 @@ public class SVSImageReader extends AbstractImageReader {
             reader.setSeries(i);
             builder.addScale(i, reader.getSizeX(), reader.getSizeY());
         }
-        //System.out.println("# of scales "+reader.getSeriesCount());
         meta = builder.build();
         //ShowPyramidMeta();
     }
@@ -120,6 +119,12 @@ public class SVSImageReader extends AbstractImageReader {
         return METAVERSION;
     }
 
+    @Override
+    public BufferedImage readTile(ImageRegion region, Rectangle preferredsize) {
+        ImageMeta.ImageScale scale = meta.getBestMatch(Math.max((double) region.getWidth()/(double) preferredsize.width(),(double) region.getHeight()/ (double) preferredsize.height()));
+        return readTile(scale.Validate(region.scaleRegion(scale.scale())),scale.series());
+    }    
+    
     private BufferedImage readTile(ImageRegion region, int series) {
         reader.setSeries(series);
         try {
@@ -139,12 +144,6 @@ public class SVSImageReader extends AbstractImageReader {
         } catch (IOException ex) {
             Logger.getLogger(SVSImageReader.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    @Override
-    public BufferedImage readTile(ImageRegion region, Rectangle preferredsize) {
-        ImageMeta.ImageScale scale = meta.getBestMatch(Math.max((double) region.getWidth()/(double) preferredsize.width(),(double) region.getHeight()/ (double) preferredsize.height()));
-        return readTile(scale.Validate(region.scaleRegion(scale.scale())),scale.series());
     }
     
     @Override
