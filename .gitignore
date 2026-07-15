@@ -32,3 +32,7 @@ cacerts.p12
 hs_err_pid*
 target/*
 /custom-directory/
+
+# Code review artifacts (not part of the build)
+/REVIEW.md
+/TODO.md
